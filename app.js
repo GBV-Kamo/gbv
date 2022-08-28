@@ -1,13 +1,42 @@
 const express = require("express");
 const app = express();
-// const Client = require("./Client");
-// const mongoose = require("mongoose");
-// const bodyParser = require("body-parser");
+const Client = require("./Client");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 express.json();
+app.use(bodyParser.json());
+
+mongoose.connect(
+  "mongodb+srv://Rhulani:12345@cluster0.rua8w.mongodb.net/?retryWrites=true&w=majority",
+
+  () => console.log("connected to db")
+);
+
+app.post("/", async (req, res) => {
+  console.log(req.body);
+
+  const client = new Client({
+    name: req.body.name,
+    clientId: req.body.clientId,
+    email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
+  });
+  try {
+    const addedClient = await client.save();
+    res.json(addedClient);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 
 app.get("/", async (req, res) => {
-  res.send("Our Backend works");
+  try {
+    const client = await Client.find();
+    res.json(client);
+  } catch (err) {
+    res.json({ message: err });
+  }
 });
 
 app.listen(3000, () => {
