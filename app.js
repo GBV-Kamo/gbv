@@ -14,16 +14,15 @@ mongoose.connect(
 );
 
 app.post("/", async (req, res) => {
-  console.log(req.body);
-
   const client = new Client({
     name: req.body.name,
-    clientId: req.body.clientId,
+    password: req.body.password,
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
   });
   try {
     const addedClient = await client.save();
+    console.log("Client Added!");
     res.json(addedClient);
   } catch (err) {
     res.json({ message: err });
@@ -34,6 +33,22 @@ app.get("/", async (req, res) => {
   try {
     const client = await Client.find();
     res.json(client);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const client = await Client.findOne({
+      email: req.body.email,
+      password: req.body.password,
+    });
+    if (!client) {
+      res.status(500).json({ message: err });
+    } else {
+      res.json(client);
+    }
   } catch (err) {
     res.json({ message: err });
   }
