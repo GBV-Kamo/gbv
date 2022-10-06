@@ -55,7 +55,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.put("/addFriend", async (req, res) => {
-  console.log(req.body.friends);
   try {
     const updatedRestaurant = await Client.updateOne(
       { email: req.body.email },
