@@ -22,6 +22,12 @@ const ClientSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  friends: [
+    {
+      name: { type: String },
+      email: { type: String, unique: true },
+    },
+  ],
 });
 ClientSchema.plugin(uniqueValidator);
 module.exports = mongoose.model("Client", ClientSchema);

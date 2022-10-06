@@ -54,6 +54,30 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.put("/addFriend", async (req, res) => {
+  console.log(req.body.friends);
+  try {
+    const updatedRestaurant = await Client.updateOne(
+      { email: req.body.email },
+      {
+        $push: {
+          friends: {
+            name: req.body.friendName,
+            email: req.body.friend,
+          },
+        },
+      }
+    );
+    if (updatedRestaurant.modifiedCount != 0) {
+      res.json({ message: "Details updated successfully" });
+    } else {
+      res.json({ message: "No changes registered for restaurant" });
+    }
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Service running on port " + 3000);
 });
