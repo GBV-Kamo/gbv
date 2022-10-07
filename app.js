@@ -96,6 +96,25 @@ app.post("/sendPanic", async (req, res) => {
     res.json({ message: err });
   }
 });
+
+app.post("/updateToken", async (req, res) => {
+  console.log(req.body.email);
+  try {
+    const updatedToken = await Client.updateOne(
+      { email: req.body.email },
+      {
+        $set: {
+          token: req.body.token,
+        },
+      }
+    );
+    console.log(updatedToken);
+    res.json(updatedToken);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Service running on port " + 3000);
 });
