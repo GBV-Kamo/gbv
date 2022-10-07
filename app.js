@@ -19,6 +19,7 @@ app.post("/", async (req, res) => {
     password: req.body.password,
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
+    token: req.body.token,
   });
   try {
     const addedClient = await client.save();
@@ -56,27 +57,45 @@ app.post("/login", async (req, res) => {
 
 app.put("/addFriend", async (req, res) => {
   try {
-    const updatedRestaurant = await Client.updateOne(
+    console.log(req.body);
+    const friend = await Client.findOne({
+      email: req.body.friendEmail,
+    });
+
+    console.log(friend.name);
+    const friendAddded = await Client.updateOne(
       { email: req.body.email },
       {
         $push: {
           friends: {
-            name: req.body.friendName,
-            email: req.body.friend,
+            name: friend.name,
+            email: req.body.friendEmail,
+            token: friend.token,
           },
         },
       }
     );
-    if (updatedRestaurant.modifiedCount != 0) {
-      res.json({ message: "Details updated successfully" });
+    if (!friendAddded) {
+      res.status(500).json({ message: err });
     } else {
-      res.json({ message: "No changes registered for restaurant" });
+      res.json(friendAddded);
     }
   } catch (err) {
     res.json({ message: err });
   }
 });
 
+app.post("/sendPanic", async (req, res) => {
+  try {
+    console.log(req.token);
+    const panic = await Client.findOne({
+      token: req.body.token,
+    });
+    res.json(panic.friends);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 app.listen(3000, () => {
   console.log("Service running on port " + 3000);
 });
